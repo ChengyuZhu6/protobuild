@@ -194,18 +194,22 @@ func main() {
 		includes = append(includes, gopath)
 		includes = append(includes, c.Includes.After...)
 		log.Println("includes= ", includes)
+		log.Println("c.Generators= ", c.Generators)
+		log.Println("outputDir= ", outputDir)
 
 		protoc := protocCmd{
 			Generators: generators(c.Generators, outputDir),
 			Files:      pkg.ProtoFiles,
 			Includes:   includes,
 		}
+		log.Println("Generators= ", generators(c.Generators, outputDir))
 
 		importDirPath, err := importPath(outputDir, pkg.Dir)
 		if err != nil {
 			log.Fatalln(err)
 		}
 		log.Println("importDirPath= ", importDirPath)
+		log.Println("c.Packages= ", c.Packages)
 
 		parameters := map[string]map[string]string{}
 		for proto, pkg := range c.Packages {
