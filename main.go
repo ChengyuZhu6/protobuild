@@ -238,7 +238,7 @@ func main() {
 		// Set parameters per generator
 		for i := range protoc.Generators {
 			protoc.Generators[i].Parameters = parameters[protoc.Generators[i].Name]
-			log.Println("protoc.Generators[i].Parameters= ", protoc.Generators[i].Parameters)
+			log.Println("protoc.Generators[i]= ", protoc.Generators[i])
 		}
 
 		var (
