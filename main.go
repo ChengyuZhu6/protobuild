@@ -213,9 +213,11 @@ func main() {
 
 		parameters := map[string]map[string]string{}
 		for proto, pkg := range c.Packages {
-			parameters["go"] = mergeMap(parameters["go"], map[string]string{
-				fmt.Sprintf("M%s", proto): pkg,
-			})
+			for _, gen := range c.Generators {
+				parameters[gen] = mergeMap(parameters[gen], map[string]string{
+					fmt.Sprintf("M%s", proto): pkg,
+				})
+			}
 		}
 
 		for k, v := range c.Parameters {
