@@ -76,6 +76,8 @@ func main() {
 	}
 
 	pkgInfos, err := goPkgInfo(flag.Args()...)
+	log.Println("pkgInfos= ", pkgInfos)
+
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -84,11 +86,13 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	log.Println("gopath= ", gopath)
 
 	gopathCurrent, err := gopathCurrent()
 	if err != nil {
 		log.Fatalln(err)
 	}
+	log.Println("gopathCurrent= ", gopathCurrent)
 
 	// For some reason, the golang protobuf generator makes the god awful
 	// decision to output the files relative to the gopath root. It doesn't do
@@ -106,6 +110,7 @@ func main() {
 			overrides[prefix] = override
 		}
 	}
+	log.Println("overrides= ", overrides)
 
 	// Create include paths used to find the descriptor proto. As a special case
 	// we search the vendor directory relative to the current working directory.
@@ -122,12 +127,16 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	log.Println("descriptorIncludes= ", descriptorIncludes)
+	log.Println("descProto= ", descProto)
+	log.Println("includeDir= ", includeDir)
 
 	// Aggregate descriptors for each descriptor prefix.
 	descriptorSets := map[string]*descriptorSet{}
 	for _, stable := range c.Descriptors {
 		descriptorSets[stable.Prefix] = newDescriptorSet(stable.IgnoreFiles, descProto, includeDir)
 	}
+	log.Println("descriptorSets= ", descriptorSets)
 
 	shouldGenerateDescriptors := func(p string) bool {
 		for prefix := range descriptorSets {
@@ -184,6 +193,7 @@ func main() {
 
 		includes = append(includes, gopath)
 		includes = append(includes, c.Includes.After...)
+		log.Println("includes= ", includes)
 
 		protoc := protocCmd{
 			Generators: generators(c.Generators, outputDir),
@@ -195,6 +205,7 @@ func main() {
 		if err != nil {
 			log.Fatalln(err)
 		}
+		log.Println("importDirPath= ", importDirPath)
 
 		parameters := map[string]map[string]string{}
 		for proto, pkg := range c.Packages {
@@ -206,6 +217,8 @@ func main() {
 		for k, v := range c.Parameters {
 			parameters[k] = mergeMap(parameters[k], v)
 		}
+		log.Println("parameters= ", parameters)
+
 		if override, ok := overrides[importDirPath]; ok {
 			// selectively apply the overrides to the protoc structure.
 			if len(override.Generators) > 0 {
@@ -216,6 +229,7 @@ func main() {
 				parameters[k] = mergeMap(parameters[k], v)
 			}
 		}
+		log.Println("parameters= ", parameters)
 
 		// Set parameters per generator
 		for i := range protoc.Generators {
